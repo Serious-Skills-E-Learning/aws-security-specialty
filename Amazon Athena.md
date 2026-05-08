@@ -198,6 +198,29 @@ Athena is commonly used to query Security Lake data.
 Athena query results can be visualized using dashboards and reports.
 
 ---
+### Example Architecture
+
+sequenceDiagram
+    participant Admin as Security Engineer
+    participant S3_Data as S3 (Log Archive)
+    participant Glue as AWS Glue Data Catalog
+    participant Athena as Amazon Athena
+    participant S3_Results as S3 (Query Results)
+
+    Note over Admin, S3_Results: Forensic Investigation Process
+    
+    Admin->>Athena: Submit SQL Query (e.g., SELECT * FROM cloudtrail_logs)
+    Athena->>Glue: Fetch metadata (table schema & partitions)
+    Glue-->>Athena: Return schema details
+    
+    Athena->>S3_Data: Scan raw log files (JSON/CSV/Parquet)
+    S3_Data-->>Athena: Return filtered data results
+    
+    Note right of Athena: Athena processes data <br/>(Pay only for data scanned)
+    
+    Athena->>S3_Results: Store query output (.csv)
+    Athena-->>Admin: Display results in Console
+
 
 ## Security Features
 
