@@ -1,1 +1,32 @@
-🛡️ AWS Service: Amazon AthenaWhat is it?Amazon Athena is a serverless query engine that allows you to run SQL queries against large datasets stored in Amazon S3. You only pay for the amount of data scanned per query.Various Use CasesLog Analysis: Instantly query security logs like AWS CloudTrail, VPC Flow Logs, and ELB Access Logs to investigate incidents.Security Auditing: Run ad-hoc SQL queries to check for unauthorized API calls or find specific IP addresses in network traffic.Compliance Reporting: Generate reports for PCI DSS or HIPAA by analyzing historical logs stored in S3.Data Lake Exploration: Analyze raw security data from Amazon Security Lake.How it is Configured (Security Focus)Workgroups: Used to separate users, teams, or applications. You can set data usage limits and enforce encryption settings at the workgroup level so individual users cannot override them.Query Result Encryption: Athena stores results in a "staging directory" in S3. This directory must be encrypted using SSE-S3 or SSE-KMS.IAM Policies: Controls who can run queries and which AWS Glue Data Catalog databases or tables they can see.S3 Permissions: Since Athena queries data in S3, the user (or the role Athena assumes) must have s3:GetObject on the source data and s3:PutObject on the results bucket.Exam-Related Notes (SCS-C03 Traps)Athena vs. CloudTrail Lake: Athena is preferred for large-scale, cross-account log analysis or when you need to join CloudTrail data with other datasets (like VPC Flow Logs).Key Isolation: Best practice is to use different KMS keys for the source data and the Athena query results to prevent a single key compromise from exposing everything.Data Masking: For the exam, know that AWS Lake Formation can be used with Athena to provide row-level or column-level security, effectively masking sensitive PII during a query.Performance vs. Cost: Partitioning data (e.g., by /year/month/day/) and using columnar formats like Parquet reduces the data scanned, which lowers cost and improves speed.Integration with Other ServicesAWS Glue: Athena uses the Glue Data Catalog to store table schemas and metadata.Amazon QuickSight: Often used as the visualization layer to create security dashboards from Athena query results.AWS PrivateLink: Allows you to query Athena privately from within a VPC without traffic leaving the AWS network.Amazon Macie: Macie discovery results can be queried via Athena to identify where sensitive data lives in your S3 buckets.
+# 🛡️ AWS Service: Amazon Athena
+
+### 📖 What is it?
+Amazon Athena is a **serverless** query engine that allows you to run SQL queries against large datasets stored in **Amazon S3**. You only pay for the amount of data scanned per query.
+
+---
+
+### 🚀 Various Use Cases
+*   **Log Analysis:** Instantly query security logs like **AWS CloudTrail**, **VPC Flow Logs**, and **ELB Access Logs**.
+*   **Security Auditing:** Run ad-hoc SQL queries to check for unauthorized API calls.
+*   **Compliance Reporting:** Generate reports for PCI DSS or HIPAA by analyzing historical logs.
+
+---
+
+### ⚙️ How it is Configured (Security Focus)
+*   **Workgroups:** Used to separate users and teams. You can enforce **encryption settings** at the workgroup level so users cannot override them.
+*   **Query Result Encryption:** Athena stores results in S3. This directory **must be encrypted** using SSE-S3 or **SSE-KMS**.
+*   **IAM Policies:** Controls who can run queries and which Glue Data Catalog tables they can see.
+
+---
+
+### 🎓 Exam-Related Notes (SCS-C03 Traps)
+*   **Key Isolation:** Best practice is to use **different KMS keys** for the source data and the Athena query results.
+*   **Data Masking:** **AWS Lake Formation** can be used with Athena to provide **row-level** or **column-level security**.
+*   **Cost Optimization:** Partitioning data and using columnar formats like **Parquet** reduces data scanned and lowers your bill.
+
+---
+
+### 🔗 Integration with Other Services
+*   **AWS Glue:** Athena uses the Glue Data Catalog to store table schemas.
+*   **Amazon QuickSight:** Used to create security dashboards from Athena query results.
+*   **Amazon Macie:** Macie discovery results can be queried via Athena to identify sensitive data.
