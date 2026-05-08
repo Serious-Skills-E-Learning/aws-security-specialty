@@ -199,7 +199,7 @@ Athena query results can be visualized using dashboards and reports.
 
 ---
 ### Example Architecture
-
+```mermaid
 sequenceDiagram
     participant Admin as Security Engineer
     participant S3_Data as S3 (Log Archive)
@@ -220,7 +220,7 @@ sequenceDiagram
     
     Athena->>S3_Results: Store query output (.csv)
     Athena-->>Admin: Display results in Console
-
+```
 
 ## Security Features
 
