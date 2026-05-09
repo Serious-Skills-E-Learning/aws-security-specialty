@@ -159,6 +159,29 @@ Amazon OpenSearch Service
 Dashboards / Search / Analytics
 ```
 
+### Example Use Case Architecture
+
+```mermaid
+flowchart LR
+    A[AWS Accounts / Workloads] --> B[CloudTrail Logs]
+    A --> C[VPC Flow Logs]
+    A --> D[AWS WAF Logs]
+
+    B --> E[Kinesis Data Firehose]
+    C --> E
+    D --> E
+
+    E --> F[Amazon OpenSearch Service<br/>Centralized Security Log Index]
+
+    F --> G[OpenSearch Dashboards<br/>SOC / Security Team]
+
+    F --> H[Alerting Rules<br/>Suspicious Activity Detection]
+
+    H --> I[Amazon SNS<br/>Email / PagerDuty Notification]
+
+    G --> J[Threat Hunting<br/>Incident Investigation]
+```
+
 ---
 
 ## Important Integrations
