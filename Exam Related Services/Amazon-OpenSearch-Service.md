@@ -184,7 +184,7 @@ flowchart LR
 ---
 ## Example Dashboard
 
-![Dashboard](aws-security/specialty/images/OpenSearch-Example-Dashboard.png)
+![Dashboard](/aws-security-specialty/images/OpenSearch-Example-Dashboard.png)
 
 Pic Credit: AWS
 
