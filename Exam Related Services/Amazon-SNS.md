@@ -163,6 +163,22 @@ AWS Security Service
  ↓        ↓        ↓
 Email   Lambda    SQS
 ```
+---
+### Example Architecture
+'''mermaid
+flowchart LR
+    A[Amazon GuardDuty Finding] --> B[Amazon EventBridge Rule]
+    B --> C[Amazon SNS Topic]
+
+    C --> D[Security Team Email]
+    C --> E[AWS Lambda Remediation]
+    C --> F[Amazon SQS Queue]
+    C --> G[AWS Chatbot<br/>Slack or Teams]
+
+    E --> H[Isolate EC2 Instance]
+    F --> I[Ticketing / Case Management]
+'''
+---
 
 ---
 
