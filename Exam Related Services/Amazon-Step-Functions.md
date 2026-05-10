@@ -173,11 +173,11 @@ Use case: automated incident response and EC2 quarantine workflow.
 
 This is a very common use case where GuardDuty detects malicious activity and Step Functions orchestrates:
 
-investigation
-isolation
-evidence preservation
-notifications
-centralized security tracking.
+- investigation
+- isolation
+- evidence preservation
+- notifications
+- centralized security tracking.
 
 ---
 
