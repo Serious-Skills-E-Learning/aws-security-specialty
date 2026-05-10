@@ -184,7 +184,7 @@ flowchart LR
 ---
 ## Example Dashboard
 
-![Dashboard](<Exam Related Services/images/OpenSearch Example Dashboard.png>)
+markdown![Dashboard](images/OpenSearch-Example-Dashboard.png)
 
 Pic Credit: AWS
 
