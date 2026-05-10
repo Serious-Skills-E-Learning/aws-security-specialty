@@ -222,10 +222,12 @@ sequenceDiagram
     Athena-->>Admin: Display results in Console
 ```
 ---
-### Example Query
-   SELECT eventName, userIdentity.userName
-   FROM cloudtrail_logs
-   WHERE errorCode IS NOT NULL;
+## Example Query
+
+  SELECT eventName, userIdentity.userName
+  FROM cloudtrail_logs
+  WHERE errorCode IS NOT NULL;
+
 ---
 ## Security Features
 
