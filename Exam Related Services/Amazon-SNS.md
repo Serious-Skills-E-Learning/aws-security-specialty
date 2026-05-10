@@ -165,7 +165,7 @@ Email   Lambda    SQS
 ```
 ---
 ### Example Architecture
-'''mermaid
+```mermaid
 flowchart LR
     A[Amazon GuardDuty Finding] --> B[Amazon EventBridge Rule]
     B --> C[Amazon SNS Topic]
@@ -177,7 +177,7 @@ flowchart LR
 
     E --> H[Isolate EC2 Instance]
     F --> I[Ticketing / Case Management]
-'''
+```
 ---
 
 ---
