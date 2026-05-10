@@ -224,9 +224,11 @@ sequenceDiagram
 ---
 ## Example Query
 
-  SELECT eventName, userIdentity.userName
-  FROM cloudtrail_logs
-  WHERE errorCode IS NOT NULL;
+```sql
+   SELECT eventName, userIdentity.userName
+   FROM cloudtrail_logs
+   WHERE errorCode IS NOT NULL;
+```
 
 ---
 ## Security Features
