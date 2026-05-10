@@ -184,7 +184,7 @@ flowchart LR
 ---
 ## Example Dashboard
 
-![Dashboard](images/OpenSearch%20Example%20Dashboard.png)
+![Dashboard](<images/OpenSearch Example Dashboard.png>)
 
 Pic Credit: AWS
 
