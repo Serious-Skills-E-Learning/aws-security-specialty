@@ -181,6 +181,12 @@ flowchart LR
 
     G --> J[Threat Hunting<br/>Incident Investigation]
 ```
+---
+## Example Dashboard
+
+html<img src="images/OpenSearch Example Dashboard.png" alt="Dashboard" width="600">
+
+Pic Credit: AWS
 
 ---
 
