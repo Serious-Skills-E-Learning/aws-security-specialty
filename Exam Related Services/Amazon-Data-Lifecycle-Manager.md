@@ -2,57 +2,52 @@
 
 ## What Is Amazon Data Lifecycle Manager?
 
-Amazon Data Lifecycle Manager (Amazon DLM) is a service used to automate the creation, retention, and deletion of Amazon EBS snapshots and Amazon Machine Images (AMIs).
+Amazon Data Lifecycle Manager, also called Amazon DLM, is used to automate the creation, retention, and deletion of Amazon EBS snapshots and EBS-backed Amazon Machine Images.
 
-DLM helps organizations:
-- automate backup operations
-- manage snapshot lifecycles
-- reduce operational overhead
-- support disaster recovery
-- preserve forensic evidence
-- enforce retention policies
+DLM helps organizations manage backup lifecycles for EC2-based workloads without manually creating and deleting snapshots.
 
-DLM primarily focuses on:
+It is mainly used for:
+
 - EBS snapshot automation
-- AMI lifecycle management
+- EBS-backed AMI lifecycle management
+- backup retention
+- disaster recovery preparation
+- forensic snapshot preservation
+- cost control for old snapshots
+
+Think of Amazon DLM as:
+
+> A policy-based automation service for managing EBS snapshots and EBS-backed AMIs.
 
 ---
 
 ## Why Amazon Data Lifecycle Manager Matters for Security
 
-Security teams commonly use DLM for:
-- automated backup creation
-- forensic evidence preservation
-- ransomware recovery preparation
+Amazon DLM is important in security because snapshots are often needed for:
+
+- recovery
+- ransomware preparation
+- forensic preservation
+- incident response
+- compliance retention
 - disaster recovery
-- compliance retention requirements
 
-DLM helps ensure:
-- backups are created consistently
-- snapshots are retained properly
-- critical data is recoverable
-- operational errors are reduced
+Security teams commonly use snapshots before making changes to suspicious or compromised systems.
 
-Modern security operations often require:
-- automated recovery preparation
-- evidence preservation workflows
-- cross-Region backup resilience
+For example, before isolating or cleaning an EC2 instance, a team may preserve the attached EBS volumes as snapshots for later investigation.
 
 ---
 
 ## Core Concepts
 
-- DLM automates EBS snapshots
-- lifecycle policies define automation behavior
-- snapshots can be retained automatically
+- DLM automates EBS snapshot creation
+- DLM can manage EBS-backed AMI lifecycles
+- lifecycle policies define schedules and retention
+- policies can target resources by tags
 - snapshots can be copied across Regions
-- DLM commonly uses resource tags
-- AMI lifecycle management is supported
-- encrypted snapshots support secure backups
-
-Think of DLM as:
-
-> An automated lifecycle management service for snapshots and recovery operations.
+- snapshots can be encrypted with AWS KMS
+- DLM can support application-consistent snapshots using AWS Systems Manager pre and post scripts
+- DLM is focused mainly on EBS and EC2 image lifecycle automation
 
 ---
 
@@ -60,62 +55,94 @@ Think of DLM as:
 
 ### Automated EBS Snapshot Management
 
-Automatically creates snapshots for:
-- EC2 workloads
+DLM can automatically create snapshots for EBS volumes attached to EC2 workloads.
+
+This is useful for:
+
 - production systems
-- critical infrastructure
+- critical workloads
+- compliance environments
+- recovery planning
 
 ---
 
 ### Incident Response Snapshot Preservation
 
-Security teams commonly preserve EBS snapshots before:
-- remediation
-- instance isolation
-- malware cleanup
+Before remediation, security teams may create snapshots to preserve evidence.
+
+This helps with:
+
 - forensic analysis
+- malware investigation
+- timeline reconstruction
+- recovery after compromise
 
 ---
 
 ### Backup Retention Policies
 
-DLM automatically:
-- retains backups
-- deletes expired snapshots
-- enforces lifecycle rules
+DLM can automatically retain and delete snapshots based on lifecycle policies.
+
+This helps avoid:
+
+- unmanaged snapshots
+- excessive storage costs
+- missing recovery points
+- manual backup mistakes
 
 ---
 
 ### Compliance Retention
 
-Useful for workloads requiring:
-- backup retention
-- auditability
-- disaster recovery preparation
-- operational consistency
+Some workloads require consistent backup retention for audit or regulatory reasons.
+
+DLM helps enforce:
+
+- snapshot schedules
+- retention windows
+- backup consistency
+- repeatable backup operations
 
 ---
 
 ### Disaster Recovery Preparation
 
-Cross-Region snapshot copies improve:
-- resiliency
-- regional recovery capability
-- ransomware recovery readiness
+DLM can copy snapshots across Regions.
+
+This supports:
+
+- regional recovery
+- disaster recovery planning
+- additional backup resilience
 
 ---
 
 ### Automated AMI Lifecycle Management
 
-DLM can automate:
-- AMI creation
-- AMI retention
-- AMI cleanup
+DLM can manage EBS-backed AMIs.
 
-Useful for:
-- golden images
-- patch baselines
-- immutable infrastructure
+This is useful for:
+
+- golden AMI lifecycles
+- image retention
+- image cleanup
+- standardized EC2 deployments
+
+---
+
+### Application-Consistent Snapshots
+
+DLM can integrate with AWS Systems Manager to run pre and post scripts for application-consistent snapshots.
+
+This is useful for:
+
+- databases
+- transactional applications
+- enterprise workloads
+
+A pre script can freeze or flush I/O before snapshot creation, and a post script can resume normal operations after the snapshot is created.
+
+AWS documents this capability for workloads such as Windows VSS, SAP HANA, and self-managed databases using SSM documents.  
 
 ---
 
@@ -123,59 +150,68 @@ Useful for:
 
 ### Basic Workflow
 
-1. Define a lifecycle policy
-2. Select target resources using tags
-3. DLM creates snapshots automatically
-4. Snapshots are retained according to policy
-5. Old snapshots are deleted automatically
-6. Snapshots can optionally be copied to another Region
+1. Create a lifecycle policy
+2. Select target resources, usually by tags
+3. Define snapshot or AMI schedule
+4. Configure retention rules
+5. Optionally configure encryption and cross-Region copy
+6. DLM creates and manages snapshots automatically
 
 ---
 
 ### Simple Architecture
 
 ```text
-EC2 Instances
-      ↓
-Amazon EBS Volumes
-      ↓
-Data Lifecycle Manager Policy
-      ↓
-Automated Encrypted Snapshots
-      ↓
-Retention and Cross-Region Copies
+EC2 Instance
+     ↓
+EBS Volume
+     ↓
+DLM Lifecycle Policy
+     ↓
+Automated Snapshot
+     ↓
+Retention / Cross-Region Copy / Recovery
 ```
-### Example Use case: Automated encrypted EBS snapshot lifecycle with cross-Region disaster recovery.
+---
+### Example Use Case: Automated Secure EBS Snapshot and Disaster Recovery Workflow
 ```mermaid
 flowchart TD
-    A[Production EC2 Instances] --> B[Amazon EBS Volumes]
+    A[Production EC2 Instance] --> B[Amazon EBS Volume]
 
-    B --> C[Amazon Data Lifecycle Manager<br/>Snapshot Policy]
+    B --> C[Amazon Data Lifecycle Manager<br/>Lifecycle Policy]
 
-    C --> D[Create Scheduled EBS Snapshots]
-    D --> E[Encrypted Snapshots<br/>AWS KMS]
+    C --> D[Optional SSM Pre-Script<br/>Freeze or Flush Application I/O]
 
-    E --> F[Retention Policy<br/>Delete Old Snapshots]
-    E --> G[Cross-Region Copy<br/>Disaster Recovery]
+    D --> E[Create EBS Snapshot]
 
-    G --> H[Recovery Region<br/>Restore Volume if Needed]
+    E --> F[Optional SSM Post-Script<br/>Resume Application Activity]
 
-    I[Amazon EventBridge] --> J[Amazon SNS Alert]
-    C --> I
+    E --> G[Encrypted Snapshot<br/>AWS KMS]
 
-    J --> K[Operations / Security Team]
+    G --> H[Retention Policy<br/>Keep or Delete by Schedule]
+
+    G --> I[Cross-Region Copy<br/>Disaster Recovery]
+
+    I --> J[Destination Region<br/>KMS Key Required]
+
+    J --> K[Restore Volume<br/>Recovery Scenario]
+
+    C --> L[Amazon EventBridge<br/>Policy Events]
+
+    L --> M[Amazon SNS<br/>Notify Security or Ops Team]
 
     classDef compute fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+    classDef automation fill:#ede7f6,stroke:#5e35b1,color:#311b92;
     classDef backup fill:#fff3e0,stroke:#ef6c00,color:#e65100;
     classDef security fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
     classDef notify fill:#fce4ec,stroke:#ad1457,color:#880e4f;
 
     class A,B compute;
-    class C,D,F,G,H backup;
-    class E security;
-    class I,J,K notify;
+    class C,D,F,L automation;
+    class E,H,I,J,K backup;
+    class G security;
+    class M notify;
 ```
-
 ---
 
 ## Important Components
@@ -183,58 +219,75 @@ flowchart TD
 ### Lifecycle Policies
 
 Lifecycle policies define:
-- backup schedules
-- retention periods
-- target resources
-- automation rules
+
+- what resources are protected
+- when snapshots or AMIs are created
+- how long they are retained
+- whether they are copied to another Region
 
 ---
 
 ### EBS Snapshot Policies
 
-Used to automate:
+Snapshot policies automate:
+
 - EBS snapshot creation
-- retention management
-- snapshot cleanup
+- retention
+- deletion
+- optional cross-Region copy
 
 ---
 
-### AMI Management Policies
+### AMI Lifecycle Policies
 
-Used to automate:
-- AMI creation
+AMI lifecycle policies automate:
+
+- EBS-backed AMI creation
 - AMI retention
-- image cleanup
+- AMI cleanup
 
 ---
 
 ### Resource Tags
 
-DLM commonly uses tags to identify:
-- protected resources
-- target volumes
-- backup scope
+DLM commonly targets resources by tags.
 
 Example:
-- `Backup=True`
+
+```text
+Backup = True
+Environment = Production
+```
+
+This allows backup policies to apply automatically to matching resources.
 
 ---
 
 ### Retention Rules
 
-Retention rules define:
-- how long snapshots are stored
-- when snapshots are deleted
-- lifecycle duration
+Retention rules define how long snapshots or AMIs are kept.
+
+This helps control:
+
+- recovery windows
+- storage cost
+- compliance requirements
 
 ---
 
 ### Cross-Region Copy
 
-Snapshots can be copied to another AWS Region for:
-- disaster recovery
-- ransomware resilience
-- regional redundancy
+Snapshots can be copied to another AWS Region for disaster recovery.
+
+This improves resilience if the primary Region becomes unavailable.
+
+---
+
+### Cross-Region Encryption Considerations
+
+If snapshots are encrypted with a customer managed KMS key, the copy process must have permissions to use the required KMS keys.
+
+For encrypted cross-Region copies, the DLM service role needs permission to use both the source and destination KMS keys.  
 
 ---
 
@@ -242,89 +295,86 @@ Snapshots can be copied to another AWS Region for:
 
 ### Amazon EC2
 
-DLM protects:
-- EC2 workloads
-- attached EBS volumes
-- recovery operations
+DLM is commonly used with EC2 workloads that use EBS volumes.
 
 ---
 
 ### Amazon EBS
 
-Core integration.
+EBS is the primary service protected by DLM.
 
-DLM primarily automates:
+DLM automates:
+
 - EBS snapshots
-- EBS recovery workflows
-
----
-
-### AWS IAM
-
-IAM controls:
-- lifecycle policy access
-- snapshot permissions
-- recovery permissions
+- EBS snapshot retention
+- EBS snapshot deletion
 
 ---
 
 ### AWS KMS
 
-KMS encrypts:
+KMS is used to encrypt:
+
 - EBS volumes
-- snapshots
+- EBS snapshots
 - copied snapshots
 
-Very important for:
-- compliance
-- sensitive workloads
+KMS permissions are especially important for encrypted cross-Region copies.
+
+---
+
+### AWS Systems Manager
+
+Systems Manager can be used with DLM pre and post scripts to create application-consistent snapshots.
+
+This is important when snapshots must capture a clean application state.
 
 ---
 
 ### AWS CloudTrail
 
-CloudTrail logs:
-- lifecycle policy changes
-- snapshot activity
-- deletion activity
-- IAM actions
+CloudTrail records API activity related to:
 
-Useful for:
-- auditing
-- investigations
-- compliance reviews
+- lifecycle policy changes
+- snapshot operations
+- AMI operations
+- IAM actions
 
 ---
 
 ### Amazon EventBridge
 
-Can monitor:
-- snapshot creation events
-- lifecycle operations
-- backup workflows
+EventBridge can detect DLM-related events and route them to notification or remediation workflows.
 
-Can trigger:
-- notifications
-- remediation workflows
+Example:
+
+```text
+DLM policy failure
+        ↓
+EventBridge
+        ↓
+SNS notification
+```
 
 ---
 
-### AWS Organizations
+### Amazon SNS
 
-Useful for:
-- centralized governance
-- multi-account backup strategies
-- compliance management
+SNS can notify security or operations teams when:
+
+- snapshot creation fails
+- lifecycle policies fail
+- recovery workflows require attention
 
 ---
 
 ### AWS Backup
 
-AWS Backup provides broader backup orchestration across multiple AWS services.
+AWS Backup is often compared with DLM.
 
-DLM focuses primarily on:
-- EBS snapshots
-- AMI lifecycle automation
+DLM focuses mainly on EBS snapshots and EBS-backed AMI lifecycle management.
+
+AWS Backup provides broader backup governance across multiple AWS services.
 
 ---
 
@@ -332,62 +382,68 @@ DLM focuses primarily on:
 
 ### Automated Snapshot Retention
 
-Helps ensure:
-- backups are consistently available
-- retention policies are enforced
-- operational mistakes are reduced
+DLM helps ensure snapshots are created and retained consistently.
+
+This reduces the risk of missing recovery points.
 
 ---
 
 ### Encrypted Snapshots
 
-Snapshots can be encrypted using:
-- AWS KMS
+Snapshots can be encrypted with AWS KMS.
 
-Protects:
+This is important for:
+
 - sensitive data
-- backup storage
-- disaster recovery copies
+- compliance workloads
+- forensic evidence protection
 
 ---
 
 ### Cross-Region Disaster Recovery
 
-Cross-Region copies improve:
-- recovery readiness
-- regional resilience
-- ransomware recovery capability
+Cross-Region snapshot copies help support disaster recovery.
+
+This can improve recovery options if a Region becomes unavailable.
 
 ---
 
-### Immutable Backup Concepts
+### Application-Consistent Snapshot Support
 
-Snapshots help preserve:
-- point-in-time recovery states
-- forensic evidence
-- recovery copies
+DLM can run Systems Manager pre and post scripts to help create application-consistent snapshots.
 
-Important during:
-- incident response
-- ransomware investigations
+This is important when crash-consistent snapshots are not enough.
 
 ---
 
 ### Tag-Based Automation
 
-Policies can automatically protect resources based on:
-- tags
-- environment labels
-- backup classifications
+DLM can apply policies based on resource tags.
+
+This helps automate protection for newly created workloads.
 
 ---
 
 ### Least Privilege Permissions
 
-IAM policies should restrict:
-- snapshot deletion
-- lifecycle modification
-- recovery permissions
+DLM permissions should be controlled carefully.
+
+Security teams should restrict who can:
+
+- create lifecycle policies
+- modify lifecycle policies
+- delete snapshots
+- modify KMS permissions
+
+---
+
+### Ransomware Recovery Considerations
+
+DLM helps automate snapshot creation and retention, but it is not the strongest option for immutable backup protection.
+
+If an attacker gains broad administrative permissions, snapshots may still be at risk.
+
+For stronger ransomware resilience, AWS Backup features such as Backup Vault Lock or logically air-gapped vaults may be more appropriate. AWS Backup Vault Lock can make backups immutable in compliance mode.  
 
 ---
 
@@ -395,38 +451,46 @@ IAM policies should restrict:
 
 ### CloudTrail Logging
 
-CloudTrail records:
-- snapshot operations
-- policy changes
-- retention actions
-- IAM activity
+CloudTrail records DLM-related API actions.
 
----
+Useful for:
 
-### Snapshot Activity Monitoring
-
-Security teams should monitor:
-- failed snapshot jobs
-- unauthorized deletion attempts
-- missing backups
+- audits
+- investigations
+- policy change tracking
+- snapshot deletion analysis
 
 ---
 
 ### EventBridge Notifications
 
-Can generate alerts for:
-- backup failures
-- lifecycle events
-- operational anomalies
+EventBridge can route lifecycle events to:
+
+- SNS
+- Lambda
+- Step Functions
+- ticketing workflows
+
+---
+
+### Snapshot Activity Monitoring
+
+Security teams should monitor for:
+
+- failed snapshot creation
+- unexpected snapshot deletion
+- lifecycle policy changes
+- cross-Region copy failures
 
 ---
 
 ### Compliance Tracking
 
-Useful for:
-- audit evidence
-- backup verification
-- disaster recovery reporting
+Snapshot policies and retention behavior can support:
+
+- audit reviews
+- recovery reporting
+- operational assurance
 
 ---
 
@@ -434,47 +498,44 @@ Useful for:
 
 ### Preserving Forensic Evidence
 
-Before remediation, investigators often create:
-- EBS snapshots
-- preserved recovery points
+During an EC2 investigation, EBS snapshots can preserve disk state before remediation.
 
-This protects evidence from modification.
+This helps avoid destroying useful evidence.
 
 ---
 
 ### Snapshot Before Remediation
 
-Very common workflow:
+A common response workflow:
 
 ```text
-GuardDuty Finding
-        ↓
-EventBridge
-        ↓
-Lambda or Step Functions
-        ↓
+Security Finding
+      ↓
 Create EBS Snapshot
-        ↓
-Quarantine EC2 Instance
+      ↓
+Quarantine or remediate EC2 instance
+      ↓
+Analyze snapshot separately
 ```
 
 ---
 
 ### Malware Investigation Support
 
-Snapshots allow investigators to:
-- analyze malware safely
-- preserve compromised disks
-- review historical data
+Snapshots can help investigators:
+
+- inspect file systems
+- review malware artifacts
+- analyze suspicious binaries
+- preserve evidence safely
 
 ---
 
 ### Ransomware Recovery Preparation
 
-Automated backups improve:
-- recovery speed
-- business continuity
-- restoration capability
+Automated snapshots help maintain recovery points before a ransomware event occurs.
+
+For stronger protection against backup deletion, use AWS Backup with immutable backup controls.
 
 ---
 
@@ -482,49 +543,62 @@ Automated backups improve:
 
 ### Snapshot Storage Costs
 
-Snapshots consume storage and increase costs over time.
+Snapshots consume storage.
 
-Retention policies should balance:
-- recovery requirements
-- operational cost
-- compliance obligations
+Uncontrolled snapshot growth can increase costs.
 
 ---
 
 ### Retention Optimization
 
-Organizations should avoid:
-- excessive retention
-- duplicate snapshots
-- unnecessary copies
+Retention policies should balance:
+
+- recovery needs
+- compliance requirements
+- storage cost
 
 ---
 
-### Cross-Region Replication Costs
+### Cross-Region Copy Costs
 
-Cross-Region copies improve resilience but increase:
-- storage costs
-- transfer costs
+Cross-Region copies improve resilience but add:
+
+- storage cost
+- data transfer cost
+- KMS management considerations
 
 ---
 
 ### AMI Cleanup
 
-Unused AMIs and snapshots should be cleaned up regularly to reduce:
-- storage consumption
-- operational clutter
+Unused AMIs and related snapshots should be cleaned up to avoid unnecessary storage cost.
 
 ---
 
 ## Service Comparisons
 
-### DLM vs AWS Backup
+### Amazon DLM vs AWS Backup
 
-| DLM | AWS Backup |
+| Amazon DLM | AWS Backup |
 |---|---|
-| focused on EBS and AMIs | centralized multi-service backups |
-| snapshot lifecycle automation | enterprise backup orchestration |
-| simpler operational model | broader service support |
+| Focused mainly on EBS snapshots and EBS-backed AMIs | Centralized backup service for multiple AWS services |
+| Lightweight lifecycle automation | Enterprise backup governance |
+| Good for EC2 and EBS snapshot automation | Good for organization-wide backup strategy |
+| Supports snapshot and AMI lifecycle policies | Supports backup plans, vaults, and advanced governance |
+| Helps with retention and cross-Region copies | Supports Backup Vault Lock for immutable backups |
+
+Use Amazon DLM when:
+
+- you need simple EBS snapshot automation
+- you need AMI lifecycle management
+- you want tag-based snapshot policies for EC2 workloads
+
+Use AWS Backup when:
+
+- you need centralized backup across many AWS services
+- you need immutable backup protection
+- you need organization-wide backup governance
+- you need stronger ransomware recovery controls
 
 ---
 
@@ -532,9 +606,10 @@ Unused AMIs and snapshots should be cleaned up regularly to reduce:
 
 | DLM | Manual Snapshots |
 |---|---|
-| automated | manual operations |
-| policy-driven | operational overhead |
-| scalable | inconsistent execution |
+| Automated | Manual |
+| Policy-driven | Human-driven |
+| Consistent | Error-prone |
+| Scalable | Operational overhead |
 
 ---
 
@@ -542,9 +617,9 @@ Unused AMIs and snapshots should be cleaned up regularly to reduce:
 
 | Snapshot Policies | AMI Policies |
 |---|---|
-| protect EBS data | manage machine images |
-| backup-focused | deployment-focused |
-| recovery workflows | image lifecycle workflows |
+| Protect EBS data | Manage machine images |
+| Backup-focused | Image lifecycle-focused |
+| Useful for recovery | Useful for deployment baselines |
 
 ---
 
@@ -552,46 +627,51 @@ Unused AMIs and snapshots should be cleaned up regularly to reduce:
 
 ### Scenario 1
 
-A company needs automated EBS snapshots for production EC2 instances.
+A company needs simple automated snapshots for EBS volumes attached to EC2 instances.
 
 Answer:
-Use Amazon Data Lifecycle Manager.
+
+Amazon Data Lifecycle Manager
 
 ---
 
 ### Scenario 2
 
-A security team needs automated snapshot preservation before EC2 remediation.
+A company needs automated lifecycle management for EBS-backed AMIs.
 
 Answer:
-Use DLM with automated workflows.
+
+Amazon Data Lifecycle Manager
 
 ---
 
 ### Scenario 3
 
-A company needs cross-Region snapshot copies for disaster recovery.
+A workload needs application-consistent EBS snapshots for a database.
 
 Answer:
-Use DLM cross-Region copy policies.
+
+Amazon Data Lifecycle Manager with Systems Manager pre and post scripts
 
 ---
 
 ### Scenario 4
 
-A company wants tag-based automated snapshot protection.
+A company needs immutable backup protection against ransomware across multiple AWS services.
 
 Answer:
-Use DLM lifecycle policies with resource tags.
+
+AWS Backup with Backup Vault Lock
 
 ---
 
 ### Scenario 5
 
-A company needs automated AMI cleanup and retention management.
+A company needs cross-Region copies of EBS snapshots for disaster recovery.
 
 Answer:
-Use DLM AMI lifecycle policies.
+
+Amazon Data Lifecycle Manager cross-Region copy policy
 
 ---
 
@@ -599,54 +679,50 @@ Use DLM AMI lifecycle policies.
 
 ### Trap 1 — Confusing DLM with AWS Backup
 
-DLM:
-- focused on EBS snapshots and AMIs
+DLM is mainly for EBS snapshots and EBS-backed AMIs.
 
-AWS Backup:
-- centralized multi-service backup platform
+AWS Backup is broader and supports centralized backup governance across multiple services.
 
 ---
 
-### Trap 2 — Forgetting Snapshot Encryption
+### Trap 2 — Assuming DLM Provides Strong Immutability
 
-Sensitive backups commonly require:
-- KMS encryption
-- encrypted snapshots
-- secure recovery copies
+DLM provides lifecycle automation.
 
----
-
-### Trap 3 — Missing Retention Policies
-
-Without retention rules:
-- storage costs increase
-- backup management becomes difficult
+For stronger immutable backup protection, AWS Backup Vault Lock is the better fit.
 
 ---
 
-### Trap 4 — Assuming Snapshots Are Automatically Immutable
+### Trap 3 — Forgetting KMS Permissions for Cross-Region Copies
 
-Additional protections may still be needed against:
-- unauthorized deletion
-- ransomware targeting backups
+Encrypted cross-Region snapshot copies require correct permissions for the source and destination KMS keys.
 
 ---
 
-### Trap 5 — Forgetting Cross-Region Recovery
+### Trap 4 — Ignoring Application Consistency
 
-Single-Region backups may not provide sufficient disaster recovery protection.
+For databases or transactional workloads, crash-consistent snapshots may not be enough.
+
+Application-consistent snapshots may require Systems Manager pre and post scripts.
+
+---
+
+### Trap 5 — Missing Retention Rules
+
+Without proper retention rules, snapshot storage can grow quickly and increase cost.
 
 ---
 
 ## Quick Revision Notes
 
-- DLM automates EBS snapshot management
-- supports AMI lifecycle management
-- commonly used for backup automation
-- useful for forensic preservation
-- supports encrypted snapshots with KMS
-- uses tag-based lifecycle policies
-- supports cross-Region snapshot copies
-- commonly integrated with incident response workflows
-- CloudTrail logs lifecycle operations
-- DLM is more specialized than AWS Backup
+- DLM automates EBS snapshots and EBS-backed AMI lifecycles
+- DLM uses lifecycle policies
+- DLM commonly targets resources by tags
+- DLM supports retention and deletion automation
+- DLM supports cross-Region snapshot copies
+- DLM can use KMS-encrypted snapshots
+- KMS permissions matter for encrypted cross-Region copies
+- DLM can use Systems Manager pre and post scripts for application-consistent snapshots
+- DLM is useful for EC2 incident response and forensic preservation
+- AWS Backup is better for centralized multi-service backup governance
+- AWS Backup Vault Lock is used for stronger immutable backup protection
