@@ -375,6 +375,12 @@ CloudTrail logs:
 ---
 
 ## Security Features
+Very important concept:
+
+- mTLS/X.509 certificates answer: "Who is the device?"
+- IoT Policies answer: "What is the device allowed to do?"
+
+Authentication and authorization are separate controls in AWS IoT Core.
 
 ### Mutual TLS Authentication
 
