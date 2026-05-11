@@ -188,7 +188,6 @@ flowchart TD
     L --> M[Amazon EventBridge]
 ```
 ---
----
 
 ## Important Components
 
