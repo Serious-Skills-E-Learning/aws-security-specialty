@@ -156,7 +156,7 @@ Defines:
 - repeatable architectures
 - resilient deployment patterns
 
-Resilience Hub can assess CloudFormation-based applications.
+Resilience Hub commonly discovers applications through CloudFormation stacks.
 
 ---
 
@@ -307,48 +307,103 @@ to validate survivability.
 ### Enterprise Disaster Recovery and Resilience Validation
 
 ```mermaid
+flowchart TD
+
+    C[AWS CloudFormation] --> A[Enterprise Applications]
+
+    D[Amazon RDS Multi-AZ] --> A
+
+    E[Elastic Load Balancer] --> A
+
+    F[Amazon Route 53 Failover] --> A
+
+    G[AWS Backup] --> A
+
+    H[AWS Elastic Disaster Recovery] --> A
+
+    L[AWS Fault Injection Service] -.tests .-> A
+
+    A --> M[Amazon CloudWatch]
+
+    A --> B[AWS Resilience Hub]
+
+    M -.monitoring data .-> B
+
+    B --> I[Resilience Assessment Reports]
+
+    B --> J[RTO and RPO Evaluation]
+
+    B --> K[Architecture Recommendations]
+
+    classDef aws fill:#ede7f6,stroke:#5e35b1,color:#311b92;
+    classDef resilience fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+    classDef operations fill:#fff3e0,stroke:#ef6c00,color:#e65100;
+
+    class A,C,D,E,F,G,H aws;
+    class B,I,J,K resilience;
+    class L,M operations;
+```
+
+**Use case:** centralized resilience assessment, disaster recovery readiness validation, failover testing, and operational continuity governance.
+
+---
+
+## Resilience Validation Workflow
+
+```mermaid
 sequenceDiagram
-    participant CF as AWS CloudFormation
-    participant APP as Enterprise Applications
-    participant RDS as Amazon RDS Multi-AZ
-    participant ELB as Elastic Load Balancer
-    participant R53 as Route 53 Failover
+    participant CF as CloudFormation / Resource Groups
+    participant APP as Enterprise Application
     participant BKP as AWS Backup
     participant DRS as AWS Elastic Disaster Recovery
     participant FIS as AWS Fault Injection Service
     participant CW as Amazon CloudWatch
     participant RH as AWS Resilience Hub
 
-    CF->>APP: Provision infrastructure
+    CF->>APP: Define application resources
 
-    RDS->>APP: Provide resilient database layer
+    BKP->>APP: Protect data using backups
 
-    ELB->>APP: Distribute traffic
+    DRS->>APP: Replicate workloads for recovery
 
-    R53->>APP: Route traffic and failover
+    FIS->>APP: Inject controlled failure
 
-    BKP->>APP: Protect application backups
+    APP->>CW: Emit metrics and alarms
 
-    DRS->>APP: Replicate workloads continuously
+    CW->>RH: Provide monitoring evidence
 
-    FIS->>APP: Simulate failures and outages
+    APP->>RH: Provide architecture and dependency context
 
-    APP->>CW: Send metrics and operational telemetry
+    RH->>RH: Assess RTO and RPO targets
 
-    APP->>RH: Submit application architecture metadata
+    RH->>RH: Evaluate resilience policy compliance
 
-    CW->>RH: Provide monitoring and alarm insights
+    RH-->>APP: Generate recommendations
 
-    RH->>RH: Evaluate RTO and RPO goals
-
-    RH->>RH: Analyze resilience posture
-
-    RH-->>APP: Generate resilience recommendations
-
-    RH-->>APP: Produce assessment reports
+    RH-->>APP: Produce resilience assessment report
 ```
 
-**Use case:** centralized resilience assessment, disaster recovery readiness validation, failover testing, and operational continuity governance.
+**Use case:** validating whether disaster recovery architectures meet operational continuity and recovery objectives.
+
+---
+
+## Disaster Recovery Strategy Comparison
+
+| DR Strategy | RTO/RPO Profile | Typical AWS Pattern |
+|---|---|
+| Backup and Restore | higher RTO/RPO | AWS Backup + restore recovery |
+| Pilot Light | medium RTO/RPO | critical services always running |
+| Warm Standby | lower RTO/RPO | scaled-down environment always active |
+| Multi-Site Active-Active | near-zero RTO | fully active multi-region workloads |
+
+### Key Security Reasoning
+
+- backup and restore is lower cost but slower recovery
+- pilot light keeps core systems ready for scaling
+- warm standby improves recovery speed
+- active-active provides strongest availability
+- Route 53 commonly manages failover routing
+- Resilience Hub validates whether architectures meet resilience goals
 
 ---
 
