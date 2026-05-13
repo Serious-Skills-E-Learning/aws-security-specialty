@@ -180,8 +180,6 @@ flowchart LR
 ```
 ---
 
----
-
 ## Important Integrations
 
 ### Amazon EventBridge
