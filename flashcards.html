@@ -43,7 +43,7 @@
     const backEl = document.getElementById('back-text');
     const progEl = document.getElementById('progress');
 
-    fetch('cards.json').then(r => r.json()).then(data => { cards = data; updateCard(); });
+    fetch('flashcards.json').then(r => r.json()).then(data => { cards = data; updateCard(); });
 
     function updateCard() {
       if(!cards.length) return;
