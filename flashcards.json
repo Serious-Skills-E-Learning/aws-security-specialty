@@ -1,10 +1,31 @@
 [
   {
-    "front": "What is Git?",
-    "back": "A distributed version control system."
+    "front": "An IAM policy contains both an explicit Allow and an explicit Deny for the same API action. What is the evaluation outcome?",
+    "back": "The outcome is a Deny. An explicit Deny always overrides any explicit Allow in AWS IAM policy evaluation logic."
   },
   {
-    "front": "What is GitHub Pages?",
-    "back": "A hosting service to publish web pages straight from a repo."
+    "front": "How do you enforce that an AWS KMS symmetric customer managed key (CMK) rotates automatically?",
+    "back": "Enable automatic key rotation in KMS. AWS will automatically rotate the key material every year while keeping the same key ID, ensuring old data can still be decrypted seamlessly."
+  },
+  {
+    "front": "To prevent unauthorized modification or deletion of security logs stored in an Amazon S3 bucket, which feature should you enable?",
+    "back": "S3 Object Lock in Compliance mode. This enforces a strict retention period that cannot be bypassed or overwritten, not even by the AWS account root user."
+  },
+  {
+    "front": "A security engineer needs to intercept and inspect cleartext HTTP/S packet payloads passing through an AWS Transit Gateway. What feature should be used?",
+    "back": "VPC Traffic Mirroring. This allows you to copy network traffic from an elastic network interface (ENI) of EC2 instances and send it to a security appliance or network analyzer."
+  },
+  {
+    "front": "Which service continuously monitors your AWS accounts, workloads, and S3 data for malicious activity, utilizing machine learning and threat intelligence?",
+    "back": "Amazon GuardDuty. It analyzes foundational data sources like AWS CloudTrail management logs, CloudTrail S3 data events, VPC Flow Logs, and DNS logs."
+  },
+  {
+    "front": "What is the primary operational difference between a standard IAM Role and an IAM Service-Linked Role?",
+    "back": "An IAM Role can be edited or deleted manually. A Service-Linked Role is predefined by an AWS service, includes all permissions required by that service, and cannot be deleted until its dependent resources are removed."
+  },
+  {
+    "front": "How can you centrally restrict specific AWS service actions (e.g., preventing any user from deleting CloudTrail logs) across multiple accounts in an AWS Organization?",
+    "back": "Apply a Service Control Policy (SCP) to the Organization Root, an Organizational Unit (OU), or a specific member account. SCPs define the maximum permissible permissions but do not grant permissions on their own."
   }
 ]
+
