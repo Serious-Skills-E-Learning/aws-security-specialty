@@ -307,39 +307,45 @@ to validate survivability.
 ### Enterprise Disaster Recovery and Resilience Validation
 
 ```mermaid
-flowchart TD
+sequenceDiagram
+    participant CF as AWS CloudFormation
+    participant APP as Enterprise Applications
+    participant RDS as Amazon RDS Multi-AZ
+    participant ELB as Elastic Load Balancer
+    participant R53 as Route 53 Failover
+    participant BKP as AWS Backup
+    participant DRS as AWS Elastic Disaster Recovery
+    participant FIS as AWS Fault Injection Service
+    participant CW as Amazon CloudWatch
+    participant RH as AWS Resilience Hub
 
-    A[Enterprise Applications] --> B[AWS Resilience Hub]
+    CF->>APP: Provision infrastructure
 
-    A --> C[AWS CloudFormation]
+    RDS->>APP: Provide resilient database layer
 
-    A --> D[Amazon RDS Multi-AZ]
+    ELB->>APP: Distribute traffic
 
-    A --> E[Elastic Load Balancer]
+    R53->>APP: Route traffic and failover
 
-    A --> F[Amazon Route 53 Failover]
+    BKP->>APP: Protect application backups
 
-    A --> G[AWS Backup]
+    DRS->>APP: Replicate workloads continuously
 
-    A --> H[AWS Elastic Disaster Recovery]
+    FIS->>APP: Simulate failures and outages
 
-    B --> I[Resilience Assessment Reports]
+    APP->>CW: Send metrics and operational telemetry
 
-    B --> J[RTO and RPO Evaluation]
+    APP->>RH: Submit application architecture metadata
 
-    B --> K[Architecture Recommendations]
+    CW->>RH: Provide monitoring and alarm insights
 
-    L[AWS Fault Injection Service] --> B
+    RH->>RH: Evaluate RTO and RPO goals
 
-    M[Amazon CloudWatch] --> B
+    RH->>RH: Analyze resilience posture
 
-    classDef aws fill:#ede7f6,stroke:#5e35b1,color:#311b92;
-    classDef resilience fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
-    classDef operations fill:#fff3e0,stroke:#ef6c00,color:#e65100;
+    RH-->>APP: Generate resilience recommendations
 
-    class A,C,D,E,F,G,H aws;
-    class B,I,J,K resilience;
-    class L,M operations;
+    RH-->>APP: Produce assessment reports
 ```
 
 **Use case:** centralized resilience assessment, disaster recovery readiness validation, failover testing, and operational continuity governance.
