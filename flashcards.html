@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Flashcards</title>
+  <style>
+    body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #f4f4f9; color: #333; }
+    .container { text-align: center; width: 100%; max-width: 500px; padding: 20px; }
+    .flashcard-wrapper { perspective: 1000px; width: 100%; height: 280px; margin-bottom: 20px; cursor: pointer; }
+    .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.4s ease; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 12px; }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .side { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 30px; box-sizing: border-box; border-radius: 12px; background: white; font-size: 1.4rem; font-weight: 500; text-align: center; border: 1px solid #e0e0e0; }
+    .back { transform: rotateY(180deg); background-color: #f0f7ff; color: #0056b3; }
+    .controls { display: flex; gap: 15px; justify-content: center; margin-bottom: 15px; }
+    button { padding: 12px 24px; font-size: 1rem; border: none; border-radius: 6px; background-color: #007bff; color: white; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+    button:hover { background-color: #0056b3; }
+    .progress { font-size: 0.9rem; color: #666; }
+    .hint { font-size: 0.8rem; color: #999; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="flashcard-wrapper" onclick="toggleFlip()">
+      <div id="card" class="flashcard">
+        <div id="front-text" class="side front">Loading...</div>
+        <div id="back-text" class="side back">Loading...</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button onclick="prevCard()">◀ Prev</button>
+      <button onclick="toggleFlip()">Flip (Space)</button>
+      <button onclick="nextCard()">Next ▶</button>
+    </div>
+    <div id="progress" class="progress">0 / 0</div>
+    <div class="hint">Tip: Use Left/Right arrows to navigate, Spacebar to flip.</div>
+  </div>
+
+  <script>
+    let cards = []; let index = 0;
+    const cardEl = document.getElementById('card');
+    const frontEl = document.getElementById('front-text');
+    const backEl = document.getElementById('back-text');
+    const progEl = document.getElementById('progress');
+
+    fetch('cards.json').then(r => r.json()).then(data => { cards = data; updateCard(); });
+
+    function updateCard() {
+      if(!cards.length) return;
+      cardEl.classList.remove('flipped');
+      setTimeout(() => {
+        frontEl.innerText = cards[index].front;
+        backEl.innerText = cards[index].back;
+        progEl.innerText = `${index + 1} / ${cards.length}`;
+      }, cardEl.classList.contains('flipped') ? 200 : 0);
+    }
+
+    function toggleFlip() { cardEl.classList.toggle('flipped'); }
+    function nextCard() { index = (index + 1) % cards.length; updateCard(); }
+    function prevCard() { index = (index - 1 + cards.length) % cards.length; updateCard(); }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); toggleFlip(); }
+      else if (e.code === 'ArrowRight') { nextCard(); }
+      else if (e.code === 'ArrowLeft') { prevCard(); }
+    });
+  </script>
+</body>
+</html>
